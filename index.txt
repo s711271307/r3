@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>就業服務乙級題庫練習</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .question { font-weight: bold; margin-bottom: 15px; }
+        .option { display: block; width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; text-align: left; cursor: pointer; }
+        .option:hover { background: #e9ecef; }
+        .correct { background: #d4edda !important; border-color: #c3e6cb; }
+        .wrong { background: #f8d7da !important; border-color: #f5c6cb; }
+        #stats { margin-top: 20px; font-size: 0.9em; color: #666; }
+        button#start-btn { width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <h1>題庫測驗</h1>
+        <div id="menu">
+            <button id="start-btn" onclick="startQuiz()">開始隨機 20 題測驗</button>
+            <div id="stats">目前總題數：1454 題</div>
+        </div>
+        <div id="quiz" style="display:none;">
+            <div id="q-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // 題庫數據範例 (請在此處填入完整的 1454 題 JSON)
+        const allQuestions = [
+            { id: 1, q: "接續聘僱之雇主應於取得接續聘僱證明書之翌日起幾日內，申請核發聘僱許可？", a: 0, o: ["15 日", "30 日", "45 日", "60 日"] },
+            { id: 4, q: "外籍留學生向勞動部申請工作許可，該工作許可有效期間最長得為多久？", a: 3, o: ["3 個月", "6 個月", "9 個月", "1 年"] },
+            { id: 17, q: "雇主聘僱外國留學生從事工作，其工作時間除寒暑假外，每星期最長為多少小時？", a: 1, o: ["16 小時", "20 小時", "24 小時", "32 小時"] },
+            { id: 1001, q: "下列何者違反個人資料保護法？", a: 3, o: ["公司張貼績優員工姓名", "政府發放敬老金提供名冊", "網購退貨提供地址給宅配", "學校提供畢業生住址給補習班"] },
+            { id: 1101, q: "對於核計勞工所得有無低於基本工資時，下列何者不應計入？", a: 1, o: ["正常工時報酬", "加班費", "獎金", "津貼"] }
+            // ...以此類推
+        ];
+
+        let currentQuiz = [];
+        let currentIndex = 0;
+
+        function startQuiz() {
+            // 隨機抽 20 題
+            currentQuiz = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 20);
+            currentIndex = 0;
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = currentQuiz[currentIndex];
+            let html = `<div class="question">${currentIndex + 1}. ${q.q}</div>`;
+            q.o.forEach((opt, i) => {
+                html += `<button class="option" onclick="checkAnswer(${i}, ${q.a})">${opt}</button>`;
+            });
+            document.getElementById('q-content').innerHTML = html;
+        }
+
+        function checkAnswer(selected, correct) {
+            const options = document.querySelectorAll('.option');
+            if (selected === correct) {
+                options[selected].classList.add('correct');
+                setTimeout(() => {
+                    currentIndex++;
+                    if (currentIndex < 20) showQuestion();
+                    else finishQuiz();
+                }, 1000);
+            } else {
+                options[selected].classList.add('wrong');
+                options[correct].classList.add('correct');
+            }
+        }
+
+        function finishQuiz() {
+            alert('測驗結束！');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
