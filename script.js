@@ -53,18 +53,24 @@ async function initQuiz() {
     // ✅ 清空後再渲染（避免重複）
     container.innerHTML = "";
 
-    currentQuestions.forEach((q, index) => {
-      const optionsHtml = (q.options || []).map((opt, i) =>
-        `<label><input type="radio" name="q${index}" value="${i}"> ${opt}</label><br>`
-      ).join("");
+   currentQuestions.forEach((q, index) => {
+  const isMulti = Array.isArray(q.answer); // ✅ answer 是陣列就當複選
 
-      container.innerHTML += `
-        <div class="question">
-          <strong>(題號 ${q.id}) ${q.question}</strong><br>
-          ${optionsHtml}
-        </div>
-      `;
-    });
+  const inputType = isMulti ? "checkbox" : "radio";
+  const optionsHtml = (q.options || []).map((opt, i) =>
+    `<label>
+      <input type="${inputType}" name="q${index}" value="${i}">
+      ${opt}
+    </label><br>`
+  ).join("");
+
+  container.innerHTML += `
+    <div class="question">
+      <strong>(題號 ${q.id}) ${q.question}</strong><br>
+      ${optionsHtml}
+    </div>`;
+});
+
 
   } catch (err) {
     console.error(err);
